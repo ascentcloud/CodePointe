@@ -1,0 +1,45 @@
+{
+    "name": "nate-mate",
+    "displayName": "NateMate",
+    "description": "",
+    "version": "0.0.1",
+    "publisher": "none",
+    "engines": {
+        "vscode": "^1.28.0"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/arrowpointe/NateMate.git"
+    },
+    "categories": [
+        "Other"
+    ],
+    "activationEvents": [
+        "workspaceContains:**/.sfdx"
+    ],
+    "main": "./extension",
+    "contributes": {
+        "commands": [
+            {
+                "command": "extension.compileProject",
+                "title": "NateMate: Compile Project"
+            }
+        ]
+    },
+    "scripts": {
+        "postinstall": "node ./node_modules/vscode/bin/install",
+        "test": "node ./node_modules/vscode/bin/test"
+    },
+    "devDependencies": {
+        "@types/mocha": "^2.2.42",
+        "@types/node": "^8.10.25",
+        "eslint": "^4.11.0",
+        "typescript": "^2.6.1",
+        "vscode": "^1.1.21"
+    },
+    "dependencies": {
+        "bluebird": "^3.5.3",
+        "lodash": "^4.17.11",
+        "vscode-uri": "^1.0.6"
+    }
+}
