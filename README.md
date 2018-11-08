@@ -14,7 +14,7 @@ Package extension
 vsce package
 ```
 
-To install the extension press command + shift + p and select "Extensions: Install from VSIX" and then find the `.vsix` file and install it.
+To install the extension use the command "Extensions: Install from VSIX" and then find the `.vsix` file and install it.
 
 ## How To Use
 
