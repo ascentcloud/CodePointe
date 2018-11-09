@@ -8,13 +8,14 @@ Install vsce
 npm install -g vsce
 ```
 
-Package extension
+Navigate to the folder where NateMate is and package the extension
 
 ```
+cd <NateMate Folder>
 vsce package
 ```
 
-To install the extension use the command "Extensions: Install from VSIX" and then find the `.vsix` file and install it.
+To install the extension use the command "Extensions: Install from VSIX" inside of VS Code and then find the `.vsix` file and install it.
 
 ## How To Use
 
