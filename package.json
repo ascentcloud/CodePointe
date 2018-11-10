@@ -39,7 +39,6 @@
     },
     "dependencies": {
         "bluebird": "^3.5.3",
-        "lodash": "^4.17.11",
-        "vscode-uri": "^1.0.6"
+        "lodash": "^4.17.11"
     }
 }
