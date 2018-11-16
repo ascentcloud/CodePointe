@@ -2,7 +2,7 @@
     "name": "nate-mate",
     "displayName": "NateMate",
     "description": "",
-    "version": "0.1",
+    "version": "0.1.0",
     "publisher": "none",
     "engines": {
         "vscode": "^1.28.0"
