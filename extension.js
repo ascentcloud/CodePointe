@@ -67,7 +67,7 @@ class Deploy {
             delete require.cache[require.resolve(path.join(this.workspace, '.natemate.js'))]
 
             const userScripts = require(path.join(this.workspace, '.natemate.js'));
-    
+
             if (userScripts && userScripts[scriptName]) {
                 await userScripts[scriptName](this.deployData);
             }
@@ -91,9 +91,9 @@ class Deploy {
     async run() {
         try {
             diagnosticCollection.clear();
-    
+
             await this.zipBundles();
-    
+
             await this.runUserScript('beforeDeployFiles');
 
             await vscode.window.withProgress({
@@ -111,7 +111,7 @@ class Deploy {
             output.appendLine(`failed to deploy: ${this.sfFiles.join(',')}`);
 
             vscode.window.showErrorMessage(`failed to deploy: ${this.sfFiles.join(',')}`);
-            
+
             const errorMessage = JSON.parse(err);
 
             const problemsByFile = _.groupBy(errorMessage.result, 'filePath');
@@ -133,9 +133,9 @@ class Deploy {
     async runCompileProject() {
         try {
             diagnosticCollection.clear();
-    
+
             const files = await fs.readdirAsync(path.join(this.workspace, 'resource-bundles'));
-    
+
             for(let file of files) {
                 if (!file.startsWith('.')) this.addBundle(file);
             }
@@ -185,17 +185,17 @@ function activate(context) {
     context.subscriptions.push(vscode.workspace.onDidSaveTextDocument(async (filePath) => {
         try {
             const workspacePath = vscode.workspace.getWorkspaceFolder(vscode.Uri.file(filePath.fileName)).uri.fsPath;
-            
+
             const relativeFilePath = path.join('.', filePath.fileName.replace(workspacePath, ''));
-            
+
             const sfRegex = /\.page$|\.component$|\.cls$|\.object$|\.trigger$|\.layout$|\.resource$|\.remoteSite$|\.labels$|\.app$|\.dashboard$|\.permissionset$|\.workflow$|\.email$|\.profile$|\.scf$|\.queue$|\.reportType$|\.report$|\.weblink$|\.tab$|\.letter$|\.role$|\.homePageComponent$|\.homePageLayout$|\.objectTranslation$|\.flow$|\.datacategorygroup$|\.snapshot$|\.site$|\.sharingRules$|\.settings$|\.callCenter$|\.community$|\.authProvider$|\.customApplicationComponent$|\.quickAction$|\.approvalProcess$|\.apxc$|\.apxt$/;
-            
+
             const sfRegexMatch = relativeFilePath.match(sfRegex);
-            
+
             const resourceRegex = /\w*\.resource/;
-            
+
             const resourceRegexMatch = relativeFilePath.match(resourceRegex);
-            
+
             if (sfRegexMatch) {
                 if (!deploy) deploy = new Deploy(workspacePath);
 
@@ -230,11 +230,11 @@ function activate(context) {
         try {
             for(let workspaceFolder of vscode.workspace.workspaceFolders) {
                 output.appendLine('======================================================================================================================================================');
-    
+
                 output.appendLine('compiling project');
-    
+
                 const projectDeploy = new Deploy(workspaceFolder.uri.fsPath);
-    
+
                 await projectDeploy.runCompileProject();
             }
         } catch (err) {
