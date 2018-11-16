@@ -1,4 +1,9 @@
-# Apex Watch README
+# Apex Watch
+
+Apex Watch is meant to fill the gap between MavensMate and Salesforce's VS Code extension pack for the metadata source file structure. It includes features such as:
+- Automatically deploy Salesforce files on save
+- Automatically zip and deploy resource bundles when a file within the bundle is saved
+- Full project compile with resource bundles included
 
 ## Package and Install
 
