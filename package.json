@@ -1,6 +1,6 @@
 {
-    "name": "nate-mate",
-    "displayName": "NateMate",
+    "name": "apex-watch",
+    "displayName": "Apex Watch",
     "description": "",
     "version": "0.1.0",
     "publisher": "none",
@@ -9,7 +9,7 @@
     },
     "repository": {
         "type": "git",
-        "url": "https://github.com/arrowpointe/NateMate.git"
+        "url": "https://github.com/arrowpointe/apex-watch.git"
     },
     "categories": [
         "Other"
@@ -22,7 +22,7 @@
         "commands": [
             {
                 "command": "extension.compileProject",
-                "title": "NateMate: Compile Project"
+                "title": "Apex Watch: Compile Project"
             }
         ]
     },

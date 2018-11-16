@@ -5,9 +5,9 @@ const _ = require('lodash');
 const Promise = require('bluebird');
 const fs = Promise.promisifyAll(require('fs'));
 
-const output = vscode.window.createOutputChannel('NateMate');
+const output = vscode.window.createOutputChannel('Apex Watch');
 
-const diagnosticCollection = vscode.languages.createDiagnosticCollection('NateMate');
+const diagnosticCollection = vscode.languages.createDiagnosticCollection('Apex Watch');
 
 function exec(cmd, options) {
     const cmdSplit = cmd.split(' ');
@@ -64,9 +64,9 @@ class Deploy {
 
     async runUserScript(scriptName) {
         try {
-            delete require.cache[require.resolve(path.join(this.workspace, '.natemate.js'))]
+            delete require.cache[require.resolve(path.join(this.workspace, '.apex-watch.js'))]
 
-            const userScripts = require(path.join(this.workspace, '.natemate.js'));
+            const userScripts = require(path.join(this.workspace, '.apex-watch.js'));
 
             if (userScripts && userScripts[scriptName]) {
                 await userScripts[scriptName](this.deployData);
@@ -142,7 +142,7 @@ class Deploy {
 
             await this.zipBundles();
 
-            await exec('rm -rf .natematecompile', {cwd: this.workspace});
+            await exec('rm -rf .apex-watch-compile', {cwd: this.workspace});
 
             await this.runUserScript('beforeProjectCompile');
 
@@ -150,15 +150,15 @@ class Deploy {
                 location: vscode.ProgressLocation.Notification,
                 title: `converting project to sfdx format`,
                 cancellable: false
-            }, exec.bind(null, `sfdx force:mdapi:convert --rootdir ${path.join('src')} --outputdir ${path.join('.natematecompile')}`, {cwd: this.workspace, console: false}));
+            }, exec.bind(null, `sfdx force:mdapi:convert --rootdir ${path.join('src')} --outputdir ${path.join('.apex-watch-compile')}`, {cwd: this.workspace, console: false}));
 
             await vscode.window.withProgress({
                 location: vscode.ProgressLocation.Notification,
                 title: `deploying project to salesforce`,
                 cancellable: false
-            }, exec.bind(null, `sfdx force:source:deploy -p ${path.join('.natematecompile')}`, {cwd: this.workspace}));
+            }, exec.bind(null, `sfdx force:source:deploy -p ${path.join('.apex-watch-compile')}`, {cwd: this.workspace}));
 
-            await exec('rm -rf .natematecompile', { cwd: this.workspace });
+            await exec('rm -rf .apex-watch-compile', { cwd: this.workspace });
 
             await this.runUserScript('afterProjectCompile');
 
@@ -176,7 +176,7 @@ class Deploy {
 }
 
 function activate(context) {
-    output.appendLine('natemate is now active!');
+    output.appendLine('Apex Watch is now active!');
 
     let deploy = null;
 
