@@ -28,3 +28,46 @@ NateMate watches for save events on any files with Salesforce extensions and dep
 NateMate also watches for save events to any files within `*.resource` folders and will zip and deploy the resource bundle for you.
 
 Details for any deploys can be found under VS Code output after selecting the "NateMate" output channel.
+
+## Hooks
+
+Custom scripts can be run from specific hooks within NateMate. The hooks include: before/after zipping bundles, before/after deploying files, and before/after a full project compile. These custom scripts should be added to a file called `.natemate.js` which you will need to place in the root of your workspace. Note that your scripts should use async functions or return a promise if you want them to finish before the deploy continues. An object is passed to each function when they are called that inculdes: `workspace` a string with the full path to your workspace, `bundles` an array of resource bundles included in this deploy (bundle name and .resource extension only, no path), and `sfFiles` an array of paths, relative to your workspace, to salesforce files being deployed (not populated on a full project compile).
+
+`.natemate.js` should look like:
+
+```
+module.exports = (function () {
+	async function beforeZipBundle(data) {
+		// code here
+	}
+
+	async function afterZipBundle(data) {
+		// code here
+	}
+
+	async function beforeDeployFiles(data) {
+		// code here
+	}
+
+	async function afterDeployFiles(data) {
+		// code here
+	}
+
+	async function beforeProjectCompile(data) {
+		// code here
+	}
+
+	async function afterProjectCompile(data) {
+		// code here
+	}
+
+	return {
+		beforeZipBundle,
+		afterZipBundle,
+		beforeDeployFiles,
+		afterDeployFiles,
+		beforeProjectCompile,
+		afterProjectCompile
+	};
+})();
+```
