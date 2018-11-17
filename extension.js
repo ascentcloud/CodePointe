@@ -5,9 +5,9 @@ const _ = require('lodash');
 const Promise = require('bluebird');
 const fs = Promise.promisifyAll(require('fs'));
 
-const output = vscode.window.createOutputChannel('Apex Watch');
+const output = vscode.window.createOutputChannel('CodePointe');
 
-const diagnosticCollection = vscode.languages.createDiagnosticCollection('Apex Watch');
+const diagnosticCollection = vscode.languages.createDiagnosticCollection('CodePointe');
 
 function exec(cmd, options) {
     const cmdSplit = cmd.split(' ');
@@ -64,9 +64,9 @@ class Deploy {
 
     async runUserScript(scriptName) {
         try {
-            delete require.cache[require.resolve(path.join(this.workspace, '.apex-watch.js'))]
+            delete require.cache[require.resolve(path.join(this.workspace, '.codepointe.js'))]
 
-            const userScripts = require(path.join(this.workspace, '.apex-watch.js'));
+            const userScripts = require(path.join(this.workspace, '.codepointe.js'));
 
             if (userScripts && userScripts[scriptName]) {
                 await userScripts[scriptName](this.deployData);
@@ -148,7 +148,7 @@ class Deploy {
 
             await this.zipBundles();
 
-            await exec('rm -rf .apex-watch-compile', {cwd: this.workspace});
+            await exec('rm -rf .codepointecompile', {cwd: this.workspace});
 
             await this.runUserScript('beforeProjectCompile');
 
@@ -156,15 +156,15 @@ class Deploy {
                 location: vscode.ProgressLocation.Notification,
                 title: `converting project to sfdx format`,
                 cancellable: false
-            }, exec.bind(null, `sfdx force:mdapi:convert --rootdir ${path.join('src')} --outputdir ${path.join('.apex-watch-compile')}`, {cwd: this.workspace, console: false}));
+            }, exec.bind(null, `sfdx force:mdapi:convert --rootdir ${path.join('src')} --outputdir ${path.join('.codepointecompile')}`, {cwd: this.workspace, console: false}));
 
             await vscode.window.withProgress({
                 location: vscode.ProgressLocation.Notification,
                 title: `deploying project to salesforce`,
                 cancellable: false
-            }, exec.bind(null, `sfdx force:source:deploy -p ${path.join('.apex-watch-compile')}`, {cwd: this.workspace}));
+            }, exec.bind(null, `sfdx force:source:deploy -p ${path.join('.codepointecompile')}`, {cwd: this.workspace}));
 
-            await exec('rm -rf .apex-watch-compile', { cwd: this.workspace });
+            await exec('rm -rf .codepointecompile', { cwd: this.workspace });
 
             await this.runUserScript('afterProjectCompile');
 
@@ -182,7 +182,7 @@ class Deploy {
 }
 
 function activate(context) {
-    output.appendLine('Apex Watch is now active!');
+    output.appendLine('CodePointe is now active!');
 
     let deploy = null;
 
