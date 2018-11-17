@@ -134,7 +134,13 @@ class Deploy {
         try {
             diagnosticCollection.clear();
 
-            const files = await fs.readdirAsync(path.join(this.workspace, 'resource-bundles'));
+            let files;
+
+            try {
+                files = await fs.readdirAsync(path.join(this.workspace, 'resource-bundles'));
+            } catch (err) {
+                files = [];
+            }
 
             for(let file of files) {
                 if (!file.startsWith('.')) this.addBundle(file);
