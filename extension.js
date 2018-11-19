@@ -63,11 +63,17 @@ class Deploy {
     }
 
     async runUserScript(scriptName) {
+        let userScripts;
+
         try {
             delete require.cache[require.resolve(path.join(this.workspace, '.codepointe.js'))]
 
-            const userScripts = require(path.join(this.workspace, '.codepointe.js'));
+            userScripts = require(path.join(this.workspace, '.codepointe.js'));
+        } catch (err) {
+            return;
+        }
 
+        try {
             if (userScripts && userScripts[scriptName]) {
                 await userScripts[scriptName](this.deployData);
             }
