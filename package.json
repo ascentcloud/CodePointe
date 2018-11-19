@@ -21,7 +21,7 @@
     "contributes": {
         "commands": [
             {
-                "command": "extension.compileProject",
+                "command": "codePointe.compileProject",
                 "title": "CodePointe: Compile Project"
             }
         ]

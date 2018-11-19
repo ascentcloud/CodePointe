@@ -170,7 +170,7 @@ class Deploy {
                 cancellable: false
             }, exec.bind(null, `sfdx force:source:deploy -p ${path.join('.codepointecompile')}`, {cwd: this.workspace}));
 
-            await exec('rm -rf .codepointecompile', { cwd: this.workspace });
+            await exec('rm -rf .codepointecompile', {cwd: this.workspace});
 
             await this.runUserScript('afterProjectCompile');
 
@@ -182,7 +182,7 @@ class Deploy {
 
             vscode.window.showErrorMessage('project compile failed');
 
-            await exec('rm -rf .codepointecompile', { cwd: this.workspace });
+            await exec('rm -rf .codepointecompile', {cwd: this.workspace});
 
             output.show();
         }
@@ -240,7 +240,7 @@ function activate(context) {
         }
     }));
 
-    context.subscriptions.push(vscode.commands.registerCommand('extension.compileProject', async () => {
+    context.subscriptions.push(vscode.commands.registerCommand('codePointe.compileProject', async () => {
         try {
             for(let workspaceFolder of vscode.workspace.workspaceFolders) {
                 output.appendLine('======================================================================================================================================================');
