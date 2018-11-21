@@ -150,23 +150,13 @@ class Deploy {
 
             await this.zipBundles();
 
-            await exec('rm -rf .codepointecompile', {cwd: this.workspace});
-
             await this.runUserScript('beforeProjectCompile');
-
-            await vscode.window.withProgress({
-                location: vscode.ProgressLocation.Notification,
-                title: `converting project to sfdx format`,
-                cancellable: false
-            }, exec.bind(null, `sfdx force:mdapi:convert --rootdir ${path.join('src')} --outputdir ${path.join('.codepointecompile')}`, {cwd: this.workspace, console: false}));
 
             await vscode.window.withProgress({
                 location: vscode.ProgressLocation.Notification,
                 title: `deploying project to salesforce`,
                 cancellable: false
-            }, exec.bind(null, `sfdx force:source:deploy -p ${path.join('.codepointecompile')}`, {cwd: this.workspace}));
-
-            await exec('rm -rf .codepointecompile', {cwd: this.workspace});
+            }, exec.bind(null, `sfdx force:mdapi:deploy --deploydir ${path.join('src')} --wait 10`, {cwd: this.workspace}));
 
             await this.runUserScript('afterProjectCompile');
 
@@ -175,8 +165,6 @@ class Deploy {
             output.appendLine('project compile failed');
 
             vscode.window.showErrorMessage('project compile failed');
-
-            await exec('rm -rf .codepointecompile', {cwd: this.workspace});
         }
     }
 }
