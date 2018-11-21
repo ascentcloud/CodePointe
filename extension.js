@@ -111,8 +111,6 @@ class Deploy {
             await this.runUserScript('afterDeployFiles');
 
             output.appendLine('deploy complete');
-
-            output.hide();
         } catch (err) {
             output.appendLine(`failed to deploy: ${this.sfFiles.join(',')}`);
 
@@ -131,8 +129,6 @@ class Deploy {
 
                 diagnosticCollection.set(vscode.Uri.file(path.join(this.workspace, file)), diagnostics);
             });
-
-            output.show();
         }
     }
 
@@ -175,16 +171,12 @@ class Deploy {
             await this.runUserScript('afterProjectCompile');
 
             output.appendLine('project compile complete');
-
-            output.hide();
         } catch (err) {
             output.appendLine('project compile failed');
 
             vscode.window.showErrorMessage('project compile failed');
 
             await exec('rm -rf .codepointecompile', {cwd: this.workspace});
-
-            output.show();
         }
     }
 }
