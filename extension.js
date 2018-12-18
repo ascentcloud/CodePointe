@@ -9,10 +9,8 @@ const output = vscode.window.createOutputChannel('CodePointe');
 
 const diagnosticCollection = vscode.languages.createDiagnosticCollection('CodePointe');
 
-function exec(cmd, options) {
-    const cmdSplit = cmd.split(' ');
-
-    const stream = spawn(cmdSplit[0], cmdSplit.slice(1), options);
+function exec(cmd, cmdArgs = [], options) {
+    const stream = spawn(cmd, cmdArgs, options);
 
     return new Promise((resolve, reject) => {
         let result = '';
@@ -88,7 +86,9 @@ class Deploy {
         await this.runUserScript('beforeZipBundle');
 
         for (let bundle of this.bundles) {
-            await exec(`zip -FSr ${path.join(this.workspace, 'src', 'staticresources', bundle)} .`, {cwd: path.join(this.workspace, 'resource-bundles', bundle), console: false});
+            const cmd = 'zip';
+            const cmdArgs = ['-FSr', path.join(this.workspace, 'src', 'staticresources', bundle), '.'];
+            await exec(cmd, cmdArgs, {cwd: path.join(this.workspace, 'resource-bundles', bundle), console: false});
         }
 
         await this.runUserScript('afterZipBundle');
@@ -101,12 +101,13 @@ class Deploy {
             await this.zipBundles();
 
             await this.runUserScript('beforeDeployFiles');
-
+            const cmd = 'sfdx';
+            const cmdArgs = ['force:source:deploy', '--json', '-p', this.sfFiles.join(',')]
             await vscode.window.withProgress({
                 location: vscode.ProgressLocation.Notification,
                 title: `deploying: ${this.sfFiles.join(',')}`,
                 cancellable: false
-            }, exec.bind(null, `sfdx force:source:deploy --json -p ${this.sfFiles.join(',')}`, {cwd: this.workspace}));
+            }, exec.bind(null, cmd, cmdArgs, {cwd: this.workspace}));
 
             await this.runUserScript('afterDeployFiles');
 
@@ -151,12 +152,13 @@ class Deploy {
             await this.zipBundles();
 
             await this.runUserScript('beforeProjectCompile');
-
+            const cmd = 'sfdx';
+            const cmdArgs = ['force:mdapi:deploy', '--deploydir', path.join('src'), '--wait', '10']
             await vscode.window.withProgress({
                 location: vscode.ProgressLocation.Notification,
                 title: `deploying project to salesforce`,
                 cancellable: false
-            }, exec.bind(null, `sfdx force:mdapi:deploy --deploydir ${path.join('src')} --wait 10`, {cwd: this.workspace}));
+            }, exec.bind(null, cmd, cmdArgs, {cwd: this.workspace}));
 
             await this.runUserScript('afterProjectCompile');
 
