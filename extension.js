@@ -153,7 +153,7 @@ class Deploy {
 
             await this.runUserScript('beforeProjectCompile');
             const cmd = 'sfdx';
-            const cmdArgs = ['force:mdapi:deploy', '--deploydir', path.join('src'), '--wait', '10']
+            const cmdArgs = ['force:mdapi:deploy', '--json', '--deploydir', path.join('src'), '--wait', '10']
             await vscode.window.withProgress({
                 location: vscode.ProgressLocation.Notification,
                 title: `deploying project to salesforce`,
@@ -167,6 +167,24 @@ class Deploy {
             output.appendLine('project compile failed');
 
             vscode.window.showErrorMessage('project compile failed');
+
+            const errorMessage = JSON.parse(err);
+
+            const failures = _.filter(errorMessage.result.details.componentFailures, (component) => {
+                return component.success === 'false';
+            });
+
+            const problemsByFile = _.groupBy(failures, 'fileName');
+
+            _.forEach(problemsByFile, (fileProblems, file) => {
+                const diagnostics = fileProblems.map((problem) => {
+                    const range = new vscode.Range(Number(problem.lineNumber) - 1, Number(problem.columnNumber) - 1, Number(problem.lineNumber) - 1, Number(problem.columnNumber) - 1);
+
+                    return new vscode.Diagnostic(range, problem.problem.replace(/ {1}\([0-9]+:[0-9]+\)$/, ''));
+                });
+
+                diagnosticCollection.set(vscode.Uri.file(path.join(this.workspace, file)), diagnostics);
+            });
         }
     }
 }
