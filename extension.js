@@ -196,13 +196,19 @@ function activate(context) {
 
     let deployTimeout = null;
 
+    let fullDeploy = false;
+
     context.subscriptions.push(vscode.workspace.onDidSaveTextDocument(async (filePath) => {
         try {
             const workspacePath = vscode.workspace.getWorkspaceFolder(vscode.Uri.file(filePath.fileName)).uri.fsPath;
 
             const relativeFilePath = path.join('.', filePath.fileName.replace(workspacePath, ''));
 
-            const sfRegex = /\.page$|\.component$|\.cls$|\.object$|\.trigger$|\.layout$|\.resource$|\.remoteSite$|\.labels$|\.app$|\.dashboard$|\.permissionset$|\.workflow$|\.email$|\.profile$|\.scf$|\.queue$|\.reportType$|\.report$|\.weblink$|\.tab$|\.letter$|\.role$|\.homePageComponent$|\.homePageLayout$|\.objectTranslation$|\.flow$|\.datacategorygroup$|\.snapshot$|\.site$|\.sharingRules$|\.settings$|\.callCenter$|\.community$|\.authProvider$|\.customApplicationComponent$|\.quickAction$|\.approvalProcess$|\.apxc$|\.apxt$/;
+            const sfRegexFullCompile = /\.object$|\.permissionset$/;
+
+            const sfRegexFullCompileMatch = relativeFilePath.match(sfRegexFullCompile);
+
+            const sfRegex = /\.page$|\.component$|\.cls$|\.trigger$|\.layout$|\.resource$|\.remoteSite$|\.labels$|\.app$|\.dashboard$|\.workflow$|\.email$|\.profile$|\.scf$|\.queue$|\.reportType$|\.report$|\.weblink$|\.tab$|\.letter$|\.role$|\.homePageComponent$|\.homePageLayout$|\.objectTranslation$|\.flow$|\.datacategorygroup$|\.snapshot$|\.site$|\.sharingRules$|\.settings$|\.callCenter$|\.community$|\.authProvider$|\.customApplicationComponent$|\.quickAction$|\.approvalProcess$|\.apxc$|\.apxt$/;
 
             const sfRegexMatch = relativeFilePath.match(sfRegex);
 
@@ -210,7 +216,12 @@ function activate(context) {
 
             const resourceRegexMatch = relativeFilePath.match(resourceRegex);
 
-            if (sfRegexMatch) {
+            // do a full deploy as a workaround for sfdx deploy not handling custom objects or permission sets correctly
+            if (sfRegexFullCompileMatch || fullDeploy) {
+                fullDeploy = true;
+
+                deploy = new Deploy(workspacePath);
+            } else if (sfRegexMatch) {
                 if (!deploy) deploy = new Deploy(workspacePath);
 
                 deploy.addSfFile(relativeFilePath);
@@ -228,11 +239,19 @@ function activate(context) {
                 deployTimeout = setTimeout(() => {
                     output.appendLine('======================================================================================================================================================');
 
-                    output.appendLine('deploying files');
+                    if (fullDeploy) {
+                        output.appendLine('compiling project');
 
-                    deploy.run();
+                        deploy.runCompileProject();
+                    } else {
+                        output.appendLine('deploying files');
+
+                        deploy.run();
+                    }
 
                     deploy = null;
+
+                    fullDeploy = false;
                 }, 100);
             }
         } catch (err) {
