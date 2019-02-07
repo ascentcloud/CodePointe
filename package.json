@@ -3,13 +3,13 @@
     "displayName": "CodePointe",
     "description": "Deploys Salesforce files on save",
     "version": "0.1.2",
-    "publisher": "none",
+    "publisher": "geopointe",
     "engines": {
         "vscode": "^1.28.0"
     },
     "repository": {
         "type": "git",
-        "url": "https://github.com/arrowpointe/CodePointe.git"
+        "url": "https://github.com/geopointe/CodePointe.git"
     },
     "categories": [
         "Other"
