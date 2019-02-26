@@ -68,6 +68,7 @@ class Deploy {
 
             userScripts = require(path.join(this.workspace, '.codepointe.js'));
         } catch (err) {
+            output.appendLine(err);
             return;
         }
 
