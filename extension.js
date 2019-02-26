@@ -202,6 +202,10 @@ function activate(context) {
         try {
             const workspacePath = vscode.workspace.getWorkspaceFolder(vscode.Uri.file(filePath.fileName)).uri.fsPath;
 
+            const exists = fs.existsSync(path.join(workspacePath, '.sfdx'));
+
+            if (!exists) return;
+
             const relativeFilePath = path.join('.', filePath.fileName.replace(workspacePath, ''));
 
             const sfRegexFullCompile = /\.object$|\.permissionset$/;
@@ -262,6 +266,10 @@ function activate(context) {
     context.subscriptions.push(vscode.commands.registerCommand('codePointe.compileProject', async () => {
         try {
             for(let workspaceFolder of vscode.workspace.workspaceFolders) {
+                const exists = fs.existsSync(path.join(workspaceFolder.uri.fsPath, '.sfdx'));
+
+                if (!exists) continue;
+
                 output.appendLine('======================================================================================================================================================');
 
                 output.appendLine('compiling project');

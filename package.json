@@ -15,7 +15,7 @@
         "Other"
     ],
     "activationEvents": [
-        "workspaceContains:**/.sfdx"
+        "*"
     ],
     "main": "./extension",
     "contributes": {
