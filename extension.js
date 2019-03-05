@@ -45,7 +45,7 @@ class Deploy {
     }
 
     get deployData() {
-        return _.cloneDeep(this);
+        return this;
     }
 
     addBundle(bundle) {
