@@ -36,7 +36,7 @@
         "@types/node": "^8.10.25",
         "eslint": "^4.11.0",
         "typescript": "^2.6.1",
-        "vscode": "^1.1.21"
+        "vscode": "^1.1.30"
     },
     "dependencies": {
         "bluebird": "^3.5.3",
