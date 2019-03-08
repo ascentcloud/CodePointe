@@ -117,7 +117,15 @@ class Deploy {
 
             vscode.window.showErrorMessage(`failed to deploy: ${this.sfFiles.join(',')}`);
 
-            const errorMessage = JSON.parse(err);
+            let errorMessage = '';
+
+            try {
+                errorMessage = JSON.parse(err);
+            } catch (e) {
+                output.appendLine(e);
+
+                output.appendLine(err);
+            }
 
             const problemsByFile = _.groupBy(errorMessage.result, 'filePath');
 
@@ -168,7 +176,15 @@ class Deploy {
 
             vscode.window.showErrorMessage('project compile failed');
 
-            const errorMessage = JSON.parse(err);
+            let errorMessage = '';
+
+            try {
+                errorMessage = JSON.parse(err);
+            } catch (e) {
+                output.appendLine(e);
+
+                output.appendLine(err);
+            }
 
             const failures = _.filter(errorMessage.result.details.componentFailures, (component) => {
                 return component.success === 'false';
