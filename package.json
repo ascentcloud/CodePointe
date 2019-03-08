@@ -2,7 +2,7 @@
     "name": "code-pointe",
     "displayName": "CodePointe",
     "description": "Deploys Salesforce files on save",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "publisher": "geopointe",
     "engines": {
         "vscode": "^1.28.0"
