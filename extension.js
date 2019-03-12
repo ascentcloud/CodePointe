@@ -62,6 +62,17 @@ class Deploy {
 
     async runUserScript(scriptName) {
         let userScripts;
+        let scriptFileExists = false;
+
+        try {
+            await fs.accessAsync(path.join(this.workspace, '.codepointe.js'));
+
+            scriptFileExists = true;
+        } catch (err) { }
+
+        if (!scriptFileExists) {
+            return;
+        }
 
         try {
             delete require.cache[require.resolve(path.join(this.workspace, '.codepointe.js'))]
@@ -69,6 +80,7 @@ class Deploy {
             userScripts = require(path.join(this.workspace, '.codepointe.js'));
         } catch (err) {
             output.appendLine(err);
+
             return;
         }
 
