@@ -109,22 +109,24 @@ class Deploy {
 
     async run() {
         try {
-            diagnosticCollection.clear();
-
-            await this.zipBundles();
-
-            await this.runUserScript('beforeDeployFiles');
-            const cmd = 'sfdx';
-            const cmdArgs = ['force:source:deploy', '--json', '-p', this.sfFiles.join(',')]
             await vscode.window.withProgress({
                 location: vscode.ProgressLocation.Notification,
                 title: `deploying: ${this.sfFiles.join(',')}`,
                 cancellable: false
-            }, exec.bind(null, cmd, cmdArgs, {cwd: this.workspace}));
+            }, async () => {
+                diagnosticCollection.clear();
 
-            await this.runUserScript('afterDeployFiles');
+                await this.zipBundles();
 
-            output.appendLine('deploy complete');
+                await this.runUserScript('beforeDeployFiles');
+                const cmd = 'sfdx';
+                const cmdArgs = ['force:source:deploy', '--json', '-p', this.sfFiles.join(',')]
+                await exec(cmd, cmdArgs, {cwd: this.workspace});
+
+                await this.runUserScript('afterDeployFiles');
+
+                output.appendLine('deploy complete');
+            });
         } catch (err) {
             output.appendLine(`failed to deploy: ${this.sfFiles.join(',')}`);
 
@@ -156,34 +158,36 @@ class Deploy {
 
     async runCompileProject() {
         try {
-            diagnosticCollection.clear();
-
-            let files;
-
-            try {
-                files = await fs.readdirAsync(path.join(this.workspace, 'resource-bundles'));
-            } catch (err) {
-                files = [];
-            }
-
-            for(let file of files) {
-                if (!file.startsWith('.')) this.addBundle(file);
-            }
-
-            await this.zipBundles();
-
-            await this.runUserScript('beforeProjectCompile');
-            const cmd = 'sfdx';
-            const cmdArgs = ['force:mdapi:deploy', '--json', '--deploydir', path.join('src'), '--wait', '10']
             await vscode.window.withProgress({
                 location: vscode.ProgressLocation.Notification,
                 title: `deploying project to salesforce`,
                 cancellable: false
-            }, exec.bind(null, cmd, cmdArgs, {cwd: this.workspace}));
+            }, async () => {
+                diagnosticCollection.clear();
 
-            await this.runUserScript('afterProjectCompile');
+                let files;
 
-            output.appendLine('project compile complete');
+                try {
+                    files = await fs.readdirAsync(path.join(this.workspace, 'resource-bundles'));
+                } catch (err) {
+                    files = [];
+                }
+
+                for(let file of files) {
+                    if (!file.startsWith('.')) this.addBundle(file);
+                }
+
+                await this.zipBundles();
+
+                await this.runUserScript('beforeProjectCompile');
+                const cmd = 'sfdx';
+                const cmdArgs = ['force:mdapi:deploy', '--json', '--deploydir', path.join('src'), '--wait', '10']
+                await exec(cmd, cmdArgs, {cwd: this.workspace});
+
+                await this.runUserScript('afterProjectCompile');
+
+                output.appendLine('project compile complete');
+            });
         } catch (err) {
             output.appendLine('project compile failed');
 
