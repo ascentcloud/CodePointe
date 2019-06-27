@@ -2,7 +2,7 @@
     "name": "code-pointe",
     "displayName": "CodePointe",
     "description": "Deploys Salesforce files on save",
-    "version": "1.0.6",
+    "version": "1.1.0",
     "publisher": "geopointe",
     "engines": {
         "vscode": "^1.28.0"
@@ -22,7 +22,11 @@
         "commands": [
             {
                 "command": "codePointe.compileProject",
-                "title": "CodePointe: Compile Project"
+                "title": "CodePointe: Compile Project (Production)"
+            },
+            {
+                "command": "codePointe.compileProjectDevelopment",
+                "title": "CodePointe: Compile Project (Development)"
             }
         ]
     },

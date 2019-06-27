@@ -26,7 +26,7 @@ To install the extension use the command "Extensions: Install from VSIX" inside 
 
 Follow the steps to install the [Salesforce Extension Pack](https://marketplace.visualstudio.com/items?itemName=salesforce.salesforcedx-vscode) and make sure it can deploy individual files to your org (right click a Salesforce file then click "SFDX: Deploy Source To Org"). The Salesforce Extension Pack handles setting up SFDX for your org and CodePointe simply uses these same settings.
 
-After installing CodePointe there should be a "CodePointe: Compile Project" command which zips all `resource-bundles/*.resource` folders and creates their `src/staticresources/*.resource` files and then does a full deploy of everything in the `src` folder.
+After installing CodePointe there should be "CodePointe: Compile Project (Development)" and "CodePointe: Compile Project (Production)" commands which zip all `resource-bundles/*.resource` folders and creates their `src/staticresources/*.resource` files and then does a full deploy of everything in the `src` folder.
 
 CodePointe watches for save events on any files with Salesforce extensions and deploys them individually.
 
@@ -66,13 +66,23 @@ module.exports = (function () {
 		// code here
 	}
 
+	async function beforeProjectCompileDevelopment(data) {
+		// code here
+	}
+
+	async function afterProjectCompileDevelopment(data) {
+		// code here
+	}
+
 	return {
 		beforeZipBundle,
 		afterZipBundle,
 		beforeDeployFiles,
 		afterDeployFiles,
 		beforeProjectCompile,
-		afterProjectCompile
+		afterProjectCompile,
+		beforeProjectCompileDevelopment,
+		afterProjectCompileDevelopment
 	};
 })();
 ```
