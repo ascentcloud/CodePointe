@@ -156,7 +156,7 @@ class Deploy {
         }
     }
 
-    async runCompileProject() {
+    async runCompileProject(isProd) {
         try {
             await vscode.window.withProgress({
                 location: vscode.ProgressLocation.Notification,
@@ -179,12 +179,20 @@ class Deploy {
 
                 await this.zipBundles();
 
-                await this.runUserScript('beforeProjectCompile');
+                if (isProd) {
+                    await this.runUserScript('beforeProjectCompile');
+                } else {
+                    await this.runUserScript('beforeProjectCompileDevelopment');
+                }
                 const cmd = 'sfdx';
                 const cmdArgs = ['force:mdapi:deploy', '--json', '--deploydir', path.join('src'), '--wait', '10']
                 await exec(cmd, cmdArgs, {cwd: this.workspace});
 
-                await this.runUserScript('afterProjectCompile');
+                if (isProd) {
+                    await this.runUserScript('afterProjectCompile');
+                } else {
+                    await this.runUserScript('afterProjectCompileDevelopment');
+                }
 
                 output.appendLine('project compile complete');
             });
@@ -279,7 +287,7 @@ function activate(context) {
                     if (fullDeploy) {
                         output.appendLine('compiling project');
 
-                        deploy.runCompileProject();
+                        deploy.runCompileProject(false);
                     } else {
                         output.appendLine('deploying files');
 
@@ -296,7 +304,7 @@ function activate(context) {
         }
     }));
 
-    context.subscriptions.push(vscode.commands.registerCommand('codePointe.compileProject', async () => {
+    context.subscriptions.push(vscode.commands.registerCommand('codePointe.compileProjectDevelopment', async () => {
         try {
             for(let workspaceFolder of vscode.workspace.workspaceFolders) {
                 const exists = fs.existsSync(path.join(workspaceFolder.uri.fsPath, '.sfdx'));
@@ -305,11 +313,31 @@ function activate(context) {
 
                 output.appendLine('======================================================================================================================================================');
 
-                output.appendLine('compiling project');
+                output.appendLine('compiling project (development)');
 
                 const projectDeploy = new Deploy(workspaceFolder.uri.fsPath);
 
-                await projectDeploy.runCompileProject();
+                await projectDeploy.runCompileProject(false);
+            }
+        } catch (err) {
+            output.appendLine(err);
+        }
+    }));
+
+    context.subscriptions.push(vscode.commands.registerCommand('codePointe.compileProject', async () => {
+        try {
+            for (let workspaceFolder of vscode.workspace.workspaceFolders) {
+                const exists = fs.existsSync(path.join(workspaceFolder.uri.fsPath, '.sfdx'));
+
+                if (!exists) continue;
+
+                output.appendLine('======================================================================================================================================================');
+
+                output.appendLine('compiling project (production)');
+
+                const projectDeploy = new Deploy(workspaceFolder.uri.fsPath);
+
+                await projectDeploy.runCompileProject(true);
             }
         } catch (err) {
             output.appendLine(err);

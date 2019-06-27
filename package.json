@@ -22,7 +22,11 @@
         "commands": [
             {
                 "command": "codePointe.compileProject",
-                "title": "CodePointe: Compile Project"
+                "title": "CodePointe: Compile Project (Production)"
+            },
+            {
+                "command": "codePointe.compileProjectDevelopment",
+                "title": "CodePointe: Compile Project (Development)"
             }
         ]
     },
